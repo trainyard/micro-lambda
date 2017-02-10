@@ -3,22 +3,22 @@ const lambda = Object
   .getOwnPropertyNames(String.prototype)
   .reduce((lambda, method) => {
     lambda[method] = (~['concat', 'endsWith', 'slice'].indexOf(method))
-      ? (fn, ...params) => (arr) => arr[method](fn, ...params)
+      ? (fn, ...params) => (str) => str[method](fn, ...params)
       : (~['repeat', 'match'].indexOf(method))
         ? param => str => str[method](param)
         : (~['toLocaleString', 'indexOf', 'lastIndexOf'].indexOf(method))
-          ? (...params) => arr => arr[method](...params)
+          ? (...params) => str => str[method](...params)
           : (~['splice'].indexOf(method))
-            ? (...params) => arr => { var t = [...arr]; t[method](...params); return t; }
-            : (~['toLowerCase', 'toUpperCase', 'search'].indexOf(method))
+            ? (...params) => str => { var t = [...str]; t[method](...params); return t; }
+            : (~['toLowerCase', 'toLocaleLowerCase', 'toUpperCase', 'toLocaleUpperCase', 'search'].indexOf(method))
               ? str => str[method]()
               : lambda[method];
     return lambda;
   }, {
-    pop: arr => arr.slice(0, -1),
-    shift: arr => arr.slice(1),
-    unshift: params => arr => [params, ...arr],
-    reverse: arr => [...arr].reverse(),
+    pop: str => str.slice(0, -1),
+    shift: str => str.slice(1),
+    unshift: params => str => [params, ...str],
+    reverse: str => [...str].reverse(),
     compose: (...fns) => initialValue => fns.reduceRight((value, fn) => fn(value), initialValue),
     pipe: (...fns) => initialValue => fns.reduce((value, fn) => fn(value), initialValue)
   });

@@ -2,13 +2,13 @@ const { pipe } = require('pico-lambda')
 const lambda = Object
   .getOwnPropertyNames(String.prototype)
   .reduce((lambda, method) => {
-    lambda[method] = (~['concat', 'endsWith'].indexOf(method))
+    lambda[method] = (~['concat', 'endsWith', 'slice'].indexOf(method))
       ? (fn, ...params) => (arr) => arr[method](fn, ...params)
-      : (~['repeat'].indexOf(method))
+      : (~['repeat', 'match'].indexOf(method))
         ? param => str => str[method](param)
         : (~['toLocaleString', 'indexOf', 'lastIndexOf'].indexOf(method))
           ? (...params) => arr => arr[method](...params)
-          : (~['push', 'splice'].indexOf(method))
+          : (~['splice'].indexOf(method))
             ? (...params) => arr => { var t = [...arr]; t[method](...params); return t; }
             : (~['toLowerCase', 'toUpperCase', 'search'].indexOf(method))
               ? str => str[method]()
@@ -37,3 +37,19 @@ const ew = lambda.endsWith('question.')
 console.log(ew(str))
 console.log(ew('to be'))
 console.log(ew('to be', 19))
+
+var mstr = 'For more information, see Chapter 3.4.5.1'
+var re = /see (chapter \d+(\.\d)*)/i
+var found = lambda.match(re)
+console.log(found(mstr))
+
+var sliceString = 'The morning is upon us.'
+var str2 = lambda.slice(1, 8)
+var str3 = lambda.slice(4, -2)
+var str4 = lambda.slice(12)
+var str5 = lambda.slice(30)
+
+console.log(str2(sliceString))
+console.log(str3(sliceString))
+console.log(str4(sliceString))
+console.log(str5(sliceString))
